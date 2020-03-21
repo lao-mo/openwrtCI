@@ -15,18 +15,18 @@ on:
     branches:
       - master
     paths:
-      - '.config'
+      - 'start'
 #  schedule:
 #    - cron: 0 8 * * 5
 #  watch:
 #    types: started
 
 env:
-  REPO_URL: https://github.com/coolsnowwolf/lede
-  REPO_BRANCH: master
+  REPO_URL: https://git.openwrt.org/openwrt/openwrt.git
+  REPO_BRANCH: v19.07.2
   CONFIG_FILE: .config
   DIY_SH: diy.sh
-  SSH_ACTIONS: false
+  SSH_ACTIONS: true
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
   TZ: Asia/Shanghai
@@ -101,8 +101,9 @@ jobs:
       id: organize
       if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
       run: |
+        cp -rf ./openwrt/.config ./openwrt/bin/targets/bcm53xx/generic/k3.config
         cd openwrt/bin/targets/*/*
-        rm -rf packages
+        rm -rf `ls | grep -v "k3"`
         echo "::set-env name=FIRMWARE::$PWD"
         echo "::set-output name=status::success"
 
